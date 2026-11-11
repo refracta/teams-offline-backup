@@ -1,0 +1,16 @@
+[
+  {
+    "team": "가상 연구팀",
+    "channelId": "19:synthetic-studio@thread.v2",
+    "channel": "데모 스튜디오",
+    "name": "랩실 시트",
+    "id": "synthetic-lab-sheet",
+    "urls": [
+      "https://demo.example.invalid/files/demo-lab.xlsx",
+      "https://demo.example.invalid/files/demo-lab.xlsx"
+    ],
+    "file": {
+      "objectUrl": "https://demo.example.invalid/files/demo-lab.xlsx"
+    }
+  }
+]

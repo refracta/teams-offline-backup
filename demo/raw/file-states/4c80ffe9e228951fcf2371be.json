@@ -1,0 +1,11 @@
+{
+  "key": "4c80ffe9e228951fcf2371be",
+  "sourceUrl": "https://demo.example.invalid/files/demo-lab.xlsx",
+  "kind": "attachment",
+  "name": "가상 랩실 시트.xlsx",
+  "localPath": "files/demo/demo-lab.xlsx",
+  "status": "complete",
+  "bytes": 6923,
+  "sha256": "c9b3b7b728b7925b2d7a97f8252b9348188984c636e550ae3232bc7547fe55fe",
+  "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+}

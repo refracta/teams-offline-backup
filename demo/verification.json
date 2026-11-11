@@ -1,0 +1,22 @@
+{
+  "snapshotTime": "2030-04-18T06:00:00.000Z",
+  "synthetic": true,
+  "verifiedReferences": 6,
+  "uniqueFiles": 6,
+  "bytes": 9582,
+  "integrityPassed": true,
+  "failures": [],
+  "unresolvedFiles": 1,
+  "refreshFailures": 0,
+  "importedFiles": 0,
+  "inventoryComplete": true,
+  "incompleteConversations": 0,
+  "cacheOnlyMessages": 0,
+  "incompleteLibraries": 0,
+  "sheetFailures": 0,
+  "scope": {
+    "source": "generated synthetic fixtures",
+    "externalFolders": "addresses-only"
+  },
+  "needsReview": true
+}

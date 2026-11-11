@@ -1,0 +1,2 @@
+﻿"key","name","status","httpStatus","reason","sourceUrl"
+"51b2aa6e4bfa5268406e1ac0","접근 불가 예시.pdf","failed","403","가상 데모: 미확보 파일의 표시 예시입니다.","https://demo.example.invalid/files/unavailable-example.pdf"

@@ -1,0 +1,11 @@
+{
+  "synthetic": true,
+  "selfId": "8:orgid:00000000-0000-4000-8000-000000000001",
+  "selfName": "Alex Demo",
+  "snapshotTime": "2030-04-18T06:00:00.000Z",
+  "timeZone": "Asia/Seoul",
+  "scope": {
+    "source": "generated synthetic fixtures",
+    "externalFolders": "addresses-only"
+  }
+}

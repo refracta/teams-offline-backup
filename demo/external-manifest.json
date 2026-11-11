@@ -1,0 +1,44 @@
+[
+  {
+    "key": "4c80ffe9e228951fcf2371be",
+    "sourceUrl": "https://demo.example.invalid/files/demo-lab.xlsx",
+    "kind": "attachment",
+    "name": "가상 랩실 시트.xlsx",
+    "localPath": "files/demo/demo-lab.xlsx",
+    "status": "complete",
+    "bytes": 6923,
+    "sha256": "c9b3b7b728b7925b2d7a97f8252b9348188984c636e550ae3232bc7547fe55fe",
+    "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  },
+  {
+    "key": "51b2aa6e4bfa5268406e1ac0",
+    "sourceUrl": "https://demo.example.invalid/files/unavailable-example.pdf",
+    "kind": "attachment",
+    "name": "접근 불가 예시.pdf",
+    "status": "failed",
+    "httpStatus": 403,
+    "error": "가상 데모: 미확보 파일의 표시 예시입니다."
+  },
+  {
+    "key": "f2d7edf5865f87b600e9854b",
+    "sourceUrl": "https://demo.example.invalid/files/demo-measurements.csv",
+    "kind": "attachment",
+    "name": "가상 측정값.csv",
+    "localPath": "files/demo/demo-measurements.csv",
+    "status": "complete",
+    "bytes": 91,
+    "sha256": "fff63e0d5f90ec447014a43ec65956e77fadc47f36eb20db2be6375f583baaec",
+    "contentType": "text/csv"
+  },
+  {
+    "key": "f3af70dc4b8c03e148e779d9",
+    "sourceUrl": "https://demo.example.invalid/files/experiment.svg",
+    "kind": "inline-image",
+    "name": "실험 흐름 · 가상 이미지",
+    "localPath": "files/demo/experiment.svg",
+    "status": "complete",
+    "bytes": 1170,
+    "sha256": "d4fdccc45f015fbb3f890ee963a91661ee2cd4e0ed3a2f79d35c72c4ac3ecb67",
+    "contentType": "image/svg+xml"
+  }
+]

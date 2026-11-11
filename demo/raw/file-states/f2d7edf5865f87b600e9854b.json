@@ -1,0 +1,11 @@
+{
+  "key": "f2d7edf5865f87b600e9854b",
+  "sourceUrl": "https://demo.example.invalid/files/demo-measurements.csv",
+  "kind": "attachment",
+  "name": "가상 측정값.csv",
+  "localPath": "files/demo/demo-measurements.csv",
+  "status": "complete",
+  "bytes": 91,
+  "sha256": "fff63e0d5f90ec447014a43ec65956e77fadc47f36eb20db2be6375f583baaec",
+  "contentType": "text/csv"
+}

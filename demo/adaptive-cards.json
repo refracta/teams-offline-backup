@@ -1,0 +1,26 @@
+{
+  "3de07ec727fc9d4ad5799e50/1900000000258": {
+    "type": "AdaptiveCard",
+    "version": "1.5",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "가상 실험 · 다음 단계",
+        "weight": "bolder"
+      },
+      {
+        "type": "FactSet",
+        "facts": [
+          {
+            "title": "기록 상태",
+            "value": "로컬 보관 완료"
+          },
+          {
+            "title": "다음 일정",
+            "value": "2030년 4월 19일"
+          }
+        ]
+      }
+    ]
+  }
+}

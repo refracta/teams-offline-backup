@@ -1,0 +1,14 @@
+[
+  {
+    "key": "4c80ffe9e228951fcf2371be",
+    "url": "https://demo.example.invalid/files/demo-lab.xlsx",
+    "kind": "channel-file",
+    "references": [
+      {
+        "channelId": "19:synthetic-studio@thread.v2",
+        "tabId": "synthetic-lab-sheet"
+      }
+    ],
+    "name": "랩실 시트"
+  }
+]

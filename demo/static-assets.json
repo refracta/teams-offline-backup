@@ -1,0 +1,14 @@
+[
+  {
+    "key": "f3af70dc4b8c03e148e779d9",
+    "url": "https://demo.example.invalid/files/experiment.svg",
+    "kind": "inline-image",
+    "references": [
+      {
+        "conversationKey": "3de07ec727fc9d4ad5799e50",
+        "messageId": "1900000000252"
+      }
+    ],
+    "alt": "가상 실험 흐름 이미지"
+  }
+]

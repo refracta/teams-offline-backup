@@ -1,0 +1,9 @@
+{
+  "key": "51b2aa6e4bfa5268406e1ac0",
+  "sourceUrl": "https://demo.example.invalid/files/unavailable-example.pdf",
+  "kind": "attachment",
+  "name": "접근 불가 예시.pdf",
+  "status": "failed",
+  "httpStatus": 403,
+  "error": "가상 데모: 미확보 파일의 표시 예시입니다."
+}

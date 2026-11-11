@@ -1,0 +1,23 @@
+[
+  {
+    "id": "8:orgid:00000000-0000-4000-8000-000000000001",
+    "status": "complete",
+    "localPath": "files/avatars/demo-1.svg",
+    "bytes": 466,
+    "sha256": "1c6cd4921cdc39fe0c6e2bd44b9a61ef0f876b2a3d5619d5410f030715c5043e"
+  },
+  {
+    "id": "8:orgid:00000000-0000-4000-8000-000000000002",
+    "status": "complete",
+    "localPath": "files/avatars/demo-2.svg",
+    "bytes": 466,
+    "sha256": "6a57c39694e63ff7e23457823109c5f18e5a7426731ec339744a51ad6351c5f2"
+  },
+  {
+    "id": "8:orgid:00000000-0000-4000-8000-000000000003",
+    "status": "complete",
+    "localPath": "files/avatars/demo-3.svg",
+    "bytes": 466,
+    "sha256": "8d8f552c4f67a10fc3eeb457e5a2f766a2e0a14110b8fa20e801e20e40b88d11"
+  }
+]

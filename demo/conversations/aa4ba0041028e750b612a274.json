@@ -1,0 +1,25 @@
+{
+  "id": "19:synthetic-project-19@thread.v2",
+  "key": "aa4ba0041028e750b612a274",
+  "title": "가상 프로젝트 19",
+  "kind": "chat",
+  "source": "synthetic",
+  "chatType": "group",
+  "messages": [
+    {
+      "id": "1900000000019",
+      "createdAt": "2030-04-18T00:19:00.000Z",
+      "modifiedAt": null,
+      "author": "Casey Demo",
+      "authorId": "8:orgid:00000000-0000-4000-8000-000000000003",
+      "type": "RichText/Html",
+      "content": "<p>대화 목록 탐색을 위한 가상 기록 19입니다.</p>",
+      "parentMessageId": null,
+      "subject": null,
+      "mentions": [],
+      "reactions": null,
+      "files": []
+    }
+  ],
+  "cacheOnlyCount": 0
+}

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' file: data:; script-src 'self' file: 'unsafe-inline'; style-src 'self' file: 'unsafe-inline'; img-src 'self' file: data:; font-src 'self' file: data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Teams Offline Backup</title>
+    <link rel="stylesheet" href="app/vendor/katex/katex.min.css" />
+    <link rel="stylesheet" href="app/app.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">T</span
+        ><span>Teams Offline <small>Backup</small></span>
+      </div>
+      <form id="search-form" role="search">
+        <span data-icon="search"></span
+        ><input
+          id="global-search"
+          placeholder="메시지, 사람, 파일 검색"
+          aria-label="전체 백업 검색"
+          autocomplete="off"
+        /><kbd>Ctrl K</kbd>
+      </form>
+      <span class="offline-badge"><span></span>오프라인 보관함</span>
+      <div id="self-avatar"></div>
+    </header>
+    <div class="layout">
+      <nav class="rail" aria-label="기본 메뉴">
+        <button class="rail-item active" data-view="chat">
+          <span data-icon="chat"></span><span>채팅</span></button
+        ><button class="rail-item" data-view="channel">
+          <span data-icon="people"></span><span>팀</span></button
+        ><button class="rail-item" data-view="files">
+          <span data-icon="file"></span><span>파일</span></button
+        ><button class="rail-item" data-view="sheets">
+          <span data-icon="sheet"></span><span>시트</span>
+        </button>
+        <div class="rail-spacer"></div>
+        <button class="rail-item" data-view="status">
+          <span data-icon="archive"></span><span>백업 상태</span>
+        </button>
+      </nav>
+      <aside class="sidebar">
+        <div class="sidebar-title">
+          <h1 id="sidebar-heading">채팅</h1>
+          <span data-icon="archive" title="읽기 전용 보관함"></span>
+        </div>
+        <div class="sidebar-search">
+          <span data-icon="search"></span
+          ><input
+            id="chat-filter"
+            aria-label="대화 목록 필터"
+            placeholder="이름으로 찾기"
+          />
+        </div>
+        <div class="filter-chips">
+          <button data-filter="all" class="selected">전체</button
+          ><button data-filter="chat">채팅</button
+          ><button data-filter="channel">채널</button
+          ><button data-filter="meeting">모임</button>
+        </div>
+        <div id="chat-list" role="list" aria-label="대화 목록"></div>
+        <div class="sidebar-foot">보관 시점 · KST</div>
+      </aside>
+      <main id="main" tabindex="-1">
+        <div id="conversation-head"></div>
+        <nav id="conversation-tabs" aria-label="대화 탭"></nav>
+        <div id="content" aria-live="polite"></div>
+        <footer id="conversation-foot"></footer>
+      </main>
+    </div>
+    <dialog id="media-dialog">
+      <button id="close-media" aria-label="닫기">×</button>
+      <div id="media-content"></div>
+    </dialog>
+    <div id="toast" role="status"></div>
+    <script src="app/data.js"></script>
+    <script src="app/vendor/katex/katex.min.js"></script>
+    <script src="app/vendor/katex/contrib/auto-render.min.js"></script>
+    <script src="app/vendor/katex/contrib/mhchem.min.js"></script>
+    <script src="app/app.js"></script>
+  </body>
+</html>

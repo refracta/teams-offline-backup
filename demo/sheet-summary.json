@@ -1,0 +1,18 @@
+[
+  {
+    "key": "c9b3b7b728b7925b2d7a",
+    "name": "가상 랩실 시트.xlsx",
+    "localPath": "files/demo/demo-lab.xlsx",
+    "sheets": 2,
+    "cells": 76,
+    "status": "complete"
+  },
+  {
+    "key": "fff63e0d5f90ec447014",
+    "name": "가상 측정값.csv",
+    "localPath": "files/demo/demo-measurements.csv",
+    "sheets": 1,
+    "cells": 16,
+    "status": "complete"
+  }
+]

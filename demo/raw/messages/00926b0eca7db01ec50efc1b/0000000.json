@@ -1,0 +1,13 @@
+{
+  "messages": [
+    {
+      "id": "1900000000016",
+      "originalarrivaltime": "2030-04-18T00:16:00.000Z",
+      "from": "8:orgid:00000000-0000-4000-8000-000000000002",
+      "imdisplayname": "Blair Demo",
+      "messagetype": "RichText/Html",
+      "content": "<p>대화 목록 탐색을 위한 가상 기록 16입니다.</p>",
+      "properties": {}
+    }
+  ]
+}

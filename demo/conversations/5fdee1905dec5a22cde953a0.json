@@ -1,0 +1,25 @@
+{
+  "id": "19:synthetic-project-17@thread.v2",
+  "key": "5fdee1905dec5a22cde953a0",
+  "title": "가상 프로젝트 17",
+  "kind": "chat",
+  "source": "synthetic",
+  "chatType": "group",
+  "messages": [
+    {
+      "id": "1900000000017",
+      "createdAt": "2030-04-18T00:17:00.000Z",
+      "modifiedAt": null,
+      "author": "Casey Demo",
+      "authorId": "8:orgid:00000000-0000-4000-8000-000000000003",
+      "type": "RichText/Html",
+      "content": "<p>대화 목록 탐색을 위한 가상 기록 17입니다.</p>",
+      "parentMessageId": null,
+      "subject": null,
+      "mentions": [],
+      "reactions": null,
+      "files": []
+    }
+  ],
+  "cacheOnlyCount": 0
+}

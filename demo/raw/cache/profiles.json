@@ -1,0 +1,21 @@
+{
+  "stores": [
+    {
+      "name": "profiles",
+      "values": [
+        {
+          "mri": "8:orgid:00000000-0000-4000-8000-000000000001",
+          "displayName": "Alex Demo"
+        },
+        {
+          "mri": "8:orgid:00000000-0000-4000-8000-000000000002",
+          "displayName": "Blair Demo"
+        },
+        {
+          "mri": "8:orgid:00000000-0000-4000-8000-000000000003",
+          "displayName": "Casey Demo"
+        }
+      ]
+    }
+  ]
+}

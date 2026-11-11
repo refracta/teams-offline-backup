@@ -1,0 +1,11 @@
+{
+  "key": "f3af70dc4b8c03e148e779d9",
+  "sourceUrl": "https://demo.example.invalid/files/experiment.svg",
+  "kind": "inline-image",
+  "name": "실험 흐름 · 가상 이미지",
+  "localPath": "files/demo/experiment.svg",
+  "status": "complete",
+  "bytes": 1170,
+  "sha256": "d4fdccc45f015fbb3f890ee963a91661ee2cd4e0ed3a2f79d35c72c4ac3ecb67",
+  "contentType": "image/svg+xml"
+}

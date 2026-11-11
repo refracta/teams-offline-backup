@@ -1,0 +1,6 @@
+1c6cd4921cdc39fe0c6e2bd44b9a61ef0f876b2a3d5619d5410f030715c5043e  files/avatars/demo-1.svg
+6a57c39694e63ff7e23457823109c5f18e5a7426731ec339744a51ad6351c5f2  files/avatars/demo-2.svg
+8d8f552c4f67a10fc3eeb457e5a2f766a2e0a14110b8fa20e801e20e40b88d11  files/avatars/demo-3.svg
+c9b3b7b728b7925b2d7a97f8252b9348188984c636e550ae3232bc7547fe55fe  files/demo/demo-lab.xlsx
+fff63e0d5f90ec447014a43ec65956e77fadc47f36eb20db2be6375f583baaec  files/demo/demo-measurements.csv
+d4fdccc45f015fbb3f890ee963a91661ee2cd4e0ed3a2f79d35c72c4ac3ecb67  files/demo/experiment.svg

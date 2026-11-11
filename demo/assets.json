@@ -1,0 +1,47 @@
+[
+  {
+    "key": "4c80ffe9e228951fcf2371be",
+    "url": "https://demo.example.invalid/files/demo-lab.xlsx",
+    "kind": "attachment",
+    "references": [
+      {
+        "conversationKey": "3de07ec727fc9d4ad5799e50",
+        "messageId": "1900000000254"
+      }
+    ],
+    "name": "가상 랩실 시트.xlsx",
+    "baseUrl": null,
+    "itemId": null,
+    "shareUrl": null
+  },
+  {
+    "key": "f2d7edf5865f87b600e9854b",
+    "url": "https://demo.example.invalid/files/demo-measurements.csv",
+    "kind": "attachment",
+    "references": [
+      {
+        "conversationKey": "3de07ec727fc9d4ad5799e50",
+        "messageId": "1900000000254"
+      }
+    ],
+    "name": "가상 측정값.csv",
+    "baseUrl": null,
+    "itemId": null,
+    "shareUrl": null
+  },
+  {
+    "key": "51b2aa6e4bfa5268406e1ac0",
+    "url": "https://demo.example.invalid/files/unavailable-example.pdf",
+    "kind": "attachment",
+    "references": [
+      {
+        "conversationKey": "3de07ec727fc9d4ad5799e50",
+        "messageId": "1900000000259"
+      }
+    ],
+    "name": "접근 불가 예시.pdf",
+    "baseUrl": null,
+    "itemId": null,
+    "shareUrl": null
+  }
+]

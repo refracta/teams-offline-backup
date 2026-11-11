@@ -1,0 +1,29 @@
+{
+  "name": "teams-offline-backup",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A local Teams archive exporter and offline reader with a fully synthetic demo.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22",
+    "python": ">=3.10"
+  },
+  "bin": {
+    "teams-backup": "bin/teams-backup.cjs"
+  },
+  "scripts": {
+    "demo": "node bin/teams-backup.cjs demo",
+    "screenshots": "node scripts/screenshots.cjs",
+    "test": "node --test tests/*.test.cjs",
+    "test:viewer": "node tests/viewer.cjs",
+    "check:privacy": "node scripts/check-public.cjs",
+    "format": "prettier --write bin lib viewer scripts/*.cjs tests *.md docs/*.md package.json .github/workflows/*.yml"
+  },
+  "dependencies": {
+    "katex": "0.19.1",
+    "playwright": "1.65.0"
+  },
+  "devDependencies": {
+    "prettier": "3.9.10"
+  }
+}

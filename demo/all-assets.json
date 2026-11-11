@@ -1,0 +1,50 @@
+[
+  {
+    "key": "f3af70dc4b8c03e148e779d9",
+    "url": "https://demo.example.invalid/files/experiment.svg",
+    "kind": "inline-image",
+    "name": "실험 흐름 · 가상 이미지",
+    "references": [
+      {
+        "conversationKey": "3de07ec727fc9d4ad5799e50",
+        "messageId": "1900000000254"
+      }
+    ]
+  },
+  {
+    "key": "4c80ffe9e228951fcf2371be",
+    "url": "https://demo.example.invalid/files/demo-lab.xlsx",
+    "kind": "attachment",
+    "name": "가상 랩실 시트.xlsx",
+    "references": [
+      {
+        "conversationKey": "3de07ec727fc9d4ad5799e50",
+        "messageId": "1900000000254"
+      }
+    ]
+  },
+  {
+    "key": "f2d7edf5865f87b600e9854b",
+    "url": "https://demo.example.invalid/files/demo-measurements.csv",
+    "kind": "attachment",
+    "name": "가상 측정값.csv",
+    "references": [
+      {
+        "conversationKey": "3de07ec727fc9d4ad5799e50",
+        "messageId": "1900000000254"
+      }
+    ]
+  },
+  {
+    "key": "51b2aa6e4bfa5268406e1ac0",
+    "url": "https://demo.example.invalid/files/unavailable-example.pdf",
+    "kind": "attachment",
+    "name": "접근 불가 예시.pdf",
+    "references": [
+      {
+        "conversationKey": "3de07ec727fc9d4ad5799e50",
+        "messageId": "1900000000259"
+      }
+    ]
+  }
+]

@@ -1,0 +1,25 @@
+{
+  "id": "19:synthetic-project-8@thread.v2",
+  "key": "5d999eebea60eca8c8a3ccb9",
+  "title": "가상 프로젝트 08",
+  "kind": "chat",
+  "source": "synthetic",
+  "chatType": "group",
+  "messages": [
+    {
+      "id": "1900000000008",
+      "createdAt": "2030-04-18T00:08:00.000Z",
+      "modifiedAt": null,
+      "author": "Blair Demo",
+      "authorId": "8:orgid:00000000-0000-4000-8000-000000000002",
+      "type": "RichText/Html",
+      "content": "<p>대화 목록 탐색을 위한 가상 기록 8입니다.</p>",
+      "parentMessageId": null,
+      "subject": null,
+      "mentions": [],
+      "reactions": null,
+      "files": []
+    }
+  ],
+  "cacheOnlyCount": 0
+}
