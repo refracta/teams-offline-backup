@@ -1,116 +1,116 @@
-# 계정 만료 전 백업 지침
+# Backing up before your account expires
 
-계정에 접근할 수 있을 때 수집하고, 인터넷을 끊은 상태에서 결과를 확인하세요. 공개 저장소는 프로그램 배포용이고, 생성한 개인 백업은 별도로 보관합니다.
+Collect your data while you still have access to the account, then check the results with the internet disconnected. This public repository distributes the software; keep your personal archives separately.
 
-## 1. 저장 위치와 범위 정하기
+## 1. Choose a location and collection scope
 
-백업 출력은 소스 저장소 밖에 둡니다. 기본값은 `~/TeamsBackups/archive`입니다. 실제 백업과 브라우저 프로필은 서로 겹치지 않는 디렉터리여야 하며, Git 작업 폴더 안의 경로는 거부합니다. 긴 파일 경로가 많은 Windows 환경에서는 짧은 출력 경로를 권장합니다.
+Store the archive outside the source repository. The default output directory is `~/TeamsBackups/archive`. The archive and browser profile must use separate directories that do not overlap. Paths inside any Git working tree are rejected. On Windows, a short output path helps when your archive contains deeply nested folders and long filenames.
 
-파일 다운로드는 예상 파일 크기와 추가 여유 공간 5 GiB를 확인합니다. 원본 파일, 메시지 원시 JSON, 시트 미리보기가 함께 저장되므로 여유 공간을 확보하세요.
+Before downloading a file, the exporter checks that the drive has room for its expected size plus a 5 GiB reserve. Allow space for original files, raw message JSON, and spreadsheet previews.
 
-| 옵션                             | 범위                                                                              |
-| -------------------------------- | --------------------------------------------------------------------------------- |
-| `--libraries teams`              | 기본값. Teams와 채널에서 발견한 SharePoint 사이트의 문서 드라이브 탐색            |
-| `--libraries none`               | 라이브러리 전체 탐색 생략; 직접 첨부는 계속 처리                                  |
-| `--onedrive`                     | 브라우저에서 발견한 자신의 OneDrive 드라이브 추가 탐색                            |
-| `--external files`               | 기본값. 직접 파일, 이미지, 알려진 공개 문서 내보내기 주소                         |
-| `--external all`                 | 일반 외부 주소에도 GET 다운로드 시도. HTML/로그인 페이지는 원본으로 인정하지 않음 |
-| `--external none`                | 외부 링크 주소만 보관; Teams/SharePoint 파일 수집은 계속                          |
-| `--refresh`                      | 메시지를 처음부터 다시 순회하고 파일도 다시 수집. 기존 원시 메시지 페이지 유지    |
-| `--headless`                     | 로그인 후 창 없이 실행. 재인증이 필요하면 창을 켜고 다시 실행                     |
-| `--channel chrome` 또는 `msedge` | 설치된 Chrome/Edge 사용. 로그인과 백업에서 같은 옵션 사용                         |
-| `--profile PATH`                 | 별도 로그인 프로필 지정. 평소 쓰는 브라우저 프로필을 지정하지 않음                |
-| `--self-id MRI`                  | 자동 발견이 안 될 때 자신의 사용자 MRI 지정; 개인 실행 설정에만 저장              |
+| Option                         | Scope                                                                                                         |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `--libraries teams`            | Default. Explore document drives in SharePoint sites discovered through Teams and its channels                |
+| `--libraries none`             | Skip full library discovery; continue processing directly attached files                                      |
+| `--onedrive`                   | Also explore your OneDrive drive when its origin has been discovered in the browser                           |
+| `--external files`             | Default. Download direct files, images, and documents with recognized public export URLs                      |
+| `--external all`               | Attempt GET downloads from general external URLs too; HTML and login pages are not accepted as original files |
+| `--external none`              | Retain external link addresses only; continue collecting Teams and SharePoint files                           |
+| `--refresh`                    | Traverse message history from the beginning and collect files again, retaining earlier raw message pages      |
+| `--headless`                   | Run without a visible window after signing in; rerun with a visible browser if authentication is required     |
+| `--channel chrome` or `msedge` | Use an installed Chrome or Edge browser; use the same option for login and backup                             |
+| `--profile PATH`               | Specify a dedicated login profile; avoid using your everyday browser profile                                  |
+| `--self-id MRI`                | Supply your user MRI if automatic discovery fails; stored only in the private archive settings                |
 
-외부 NAS/폴더 링크는 기본적으로 주소만 보관합니다. 이 도구는 NAS 루트의 대형 데이터 전체를 재귀 복사하지 않습니다. 디렉터리 목록도 필요하면 NAS 화면에서 목록을 내보내 별도 보관하세요. 대화에 직접 첨부된 파일과 링크된 파일은 선택한 범위에서 수집합니다.
+External NAS and folder links are retained as addresses by default. The exporter does not recursively copy entire NAS roots or large research datasets. If you also need a directory listing, export it from the NAS interface and keep it separately. Direct attachments and linked files are collected according to the selected scope.
 
-## 2. 로그인하고 수집하기
+## 2. Sign in and collect data
 
 ```bash
 node bin/teams-backup.cjs login
 node bin/teams-backup.cjs backup --output ../my-private-teams-archive --external all --onedrive
 ```
 
-열린 창에서 Microsoft 로그인과 MFA를 직접 완료합니다. 코드나 채팅에 비밀번호·인증 코드를 복사할 필요가 없습니다. 로그인 창이 Teams 채팅 화면까지 도달해야 합니다. Teams가 별도 앱으로 열리려고 하면 웹에서 계속 진행합니다.
+Complete Microsoft sign-in and MFA directly in the browser window. There is no need to copy passwords or verification codes into source code or chat. Continue until the Teams chat screen loads. If Teams offers to open the desktop application, continue in the web browser.
 
-`--onedrive`를 쓸 때는 백업 브라우저에서 Teams의 파일/OneDrive 화면도 열어 인증된 출처가 관찰되도록 하세요. 발견하지 못하면 성공으로 표시하지 않고 `library-inventory.json`에 기록합니다. SharePoint는 각 사이트 출처에 맞는 인증만 사용하며, 다른 출처의 bearer token을 전달하지 않습니다.
+When using `--onedrive`, also open the Files/OneDrive screen in the backup browser so the exporter can observe its authenticated origin. If discovery fails, the exporter records the issue in `library-inventory.json`. SharePoint authentication is bound to each site's origin; bearer tokens from another origin are not forwarded.
 
-전용 브라우저 프로필 기본 위치:
+Default locations for the dedicated browser profile:
 
 - Windows: `%LOCALAPPDATA%/teams-offline-backup/browser`
 - macOS: `~/Library/Application Support/teams-offline-backup/browser`
 - Linux: `~/.local/share/teams-offline-backup/browser`
 
-이 프로필에는 로그인 쿠키가 있으므로 개인 백업 폴더나 공개 저장소로 복사하지 마세요. 백업에 필요한 인증 헤더는 실행 중 메모리에서만 사용합니다. 다운로드 서명 URL과 일반적인 토큰 필드는 API 응답 저장 시 제외합니다. 메시지 본문에 원래 쓰인 민감한 정보까지 자동 익명화하는 도구는 아닙니다.
+This profile contains login cookies, so keep it outside both the archive folder and the public repository. Authentication headers are used only in memory during execution. Fields containing preauthenticated download URLs and common tokens are filtered when API responses are saved. Sensitive information written into message bodies is not automatically anonymized.
 
-## 3. 중단 후 재개와 마지막 갱신
+## 3. Resume an interrupted run and refresh the archive
 
-같은 `--output`으로 다시 실행하면 완료된 메시지 수집은 건너뛰고 중단 지점부터 재개합니다. 완료 파일은 실제 크기와 SHA-256을 확인한 뒤 재사용합니다. 실패한 파일은 다시 시도합니다. 파일 하나를 받는 도중 중단되면 그 파일은 처음부터 다시 받으며, byte-range 재개는 하지 않습니다.
+Rerun with the same `--output` path to skip completed message collection and resume interrupted conversations from their checkpoints. Completed files are reused after their size and SHA-256 are checked. Failed files are retried. If a download stops partway through a file, that file is downloaded again from the beginning; byte-range resume is not supported.
 
 ```bash
 node bin/teams-backup.cjs backup --output ../my-private-teams-archive
 ```
 
-새 메시지와 변경 파일을 반영할 때는 다음을 사용합니다.
+To collect new messages and changed files, run:
 
 ```bash
 node bin/teams-backup.cjs backup --output ../my-private-teams-archive --refresh --external all --onedrive
 ```
 
-갱신은 메시지 전 페이지를 순회하므로 오래 걸릴 수 있습니다. 이전에 저장한 메시지가 서버 목록에서 없어져도 기존 백업을 지우지 않습니다. 파일 갱신에 실패하면 무결성을 확인한 기존 파일을 유지하고 `lastAttempt`를 기록합니다. 새 원본을 성공적으로 받으면 현재 파일을 갱신하며, 모든 과거 파일 버전을 남기지는 않습니다.
+A refresh traverses all message pages and can take time. Previously saved messages remain in the archive even if they disappear from the server inventory. If a file refresh fails, the exporter preserves the verified earlier copy and records `lastAttempt`. A successful download updates the current file; the exporter does not retain every historical file version.
 
-프로세스가 비정상 종료돼 `.backup.lock`이 남았다면 다른 수집 프로세스가 멈췄는지 확인한 뒤 출력 폴더의 해당 파일만 삭제합니다. 같은 브라우저 프로필이나 같은 출력 폴더를 동시에 여러 프로세스에서 사용하지 않습니다.
+If an interrupted process leaves `.backup.lock` behind, first confirm that no other collection process is running, then remove that file from the output directory. Do not run multiple processes against the same browser profile or output directory at the same time.
 
-## 4. 랩실 시트와 외부 문서 챙기기
+## 4. Preserve lab spreadsheets and external documents
 
-SharePoint/Teams의 Excel 파일과 발견한 채널 시트 탭은 원본 파일과 연결해 표시합니다. XLSX/XLSM은 셀 값·수식·병합·기본 스타일·포함 이미지를 미리보기로 만듭니다. XLS/CSV는 기본 셀 데이터를 표시합니다. 숨김 워크시트도 표시되며, 다운로드한 원본은 그대로 유지합니다.
+Excel files from SharePoint/Teams and discovered spreadsheet tabs are linked to their saved originals in the viewer. XLSX/XLSM previews include cell values, formulas, merged ranges, basic styles, and embedded images. XLS/CSV previews show basic cell data. Hidden worksheets are also displayed, and downloaded originals are retained.
 
-Google Sheets 등 공개 내보내기 주소는 직접 다운로드를 시도합니다. 로그인한 Google·한컴독스·NAS 등의 세션을 자동으로 복사하거나 우회하지 않습니다. 다음 경우에는 각 서비스 화면에서 직접 내보냅니다.
+The exporter attempts direct downloads from public export URLs such as Google Sheets. It does not copy or bypass login sessions for Google, Hancom Docs, NAS services, or other external applications. Export the following items directly through their service interfaces when needed:
 
-- 스프레드시트: 원본 XLSX, 필요하면 CSV/PDF도 함께 저장
-- Microsoft Lists 등 앱 안의 표: CSV/XLSX 내보내기
-- Loop·OneNote·동적 페이지: 가능한 원본과 읽기용 PDF
-- 로그인이나 권한이 필요한 링크: 접근 가능한 계정으로 원본 다운로드
+- Spreadsheets: save the original XLSX, plus CSV/PDF copies if useful.
+- Tables inside applications such as Microsoft Lists: export CSV/XLSX.
+- Loop, OneNote, and dynamic pages: save an available original and a readable PDF.
+- Links requiring authentication or permission: download the original using an account with access.
 
-`unavailable-files.csv`에서 해당 항목의 `key`를 찾은 뒤 직접 저장한 파일을 연결합니다.
+Find the item's `key` in `unavailable-files.csv`, then associate your exported file with that item:
 
 ```bash
 node bin/teams-backup.cjs import-file --output ../my-private-teams-archive --key ASSET_KEY --file ../exports/lab-sheet.xlsx
 ```
 
-수동 가져오기 파일은 사용자가 연결한 사본으로 기록하며, 원격 버전 일치까지 자동 확인하지 않습니다. 접근할 수 없는 항목은 실패 기록으로 남겨 두면 됩니다. 폴더 목록이나 PDF가 원본 데이터 파일 전체를 대체하는 것은 아닙니다.
+Manual imports are recorded as copies associated by the user. Their correspondence to the remote version is not independently verified. Items you cannot access can remain recorded as failures. A folder listing or PDF preserves a different view of the material and does not replace all underlying data files.
 
-## 5. 계정이 살아 있을 때 검증하기
+## 5. Verify while the account is still accessible
 
 ```bash
 node bin/teams-backup.cjs verify --output ../my-private-teams-archive
 ```
 
-출력 폴더의 `verification.html`에서 다음을 확인합니다.
+Open `verification.html` in the output directory and review:
 
-1. 파일 무결성: 완료로 표시한 파일의 실제 크기와 SHA-256이 맞는지
-2. 인벤토리: 서버가 부분 목록을 반환했거나 페이지 순회가 중단되지 않았는지
-3. 대화·라이브러리: 실패/불완전 상태가 남았는지
-4. 시트: 미리보기 변환 실패가 있는지. 원본은 별도로 열 수 있는지
-5. 미확보 파일: `unavailable-files.csv`의 권한·삭제·로그인·주소만 보관한 항목
-6. 캐시 전용 메시지: 서버에서 다시 받지 못한 브라우저 캐시 기록이 있는지
+1. **File integrity:** do the actual sizes and SHA-256 hashes match files marked complete?
+2. **Inventory coverage:** did the server return a partial inventory, or did pagination stop early?
+3. **Conversations and libraries:** are any collections failed or incomplete?
+4. **Spreadsheets:** did any preview conversions fail, and can you open the originals separately?
+5. **Unavailable files:** review permission errors, deleted files, login requirements, and address-only entries in `unavailable-files.csv`.
+6. **Cache-only messages:** are there browser-cached records that could not be retrieved from the server again?
 
-`SHA256SUMS.txt`는 확인한 원본 파일/프로필 사진의 체크섬 목록입니다. 검증기는 메시지 산출물의 존재를 확인하지만 서버에 남은 모든 데이터를 독립적으로 증명하지는 않습니다. 조직 보존 정책, 비공개 채널 권한, 삭제, API 변경 등의 한계를 고려해 중요한 채널·시트는 원래 화면과 직접 비교하세요.
+`SHA256SUMS.txt` lists checksums for verified original files and profile images. The verifier also checks that message artifacts exist, but it cannot independently prove that every server-side item has been collected. Compare important channels and spreadsheets with their original interfaces, accounting for retention policies, private-channel permissions, deletions, and API changes.
 
-인터넷 연결을 끊고 `index.html`을 열어 오래된 대화, 사진, 파일, 중요한 시트를 직접 확인합니다. `index.html` 한 개만 복사하면 나머지 파일을 열 수 없으므로 **출력 폴더 전체**를 별도 디스크에도 복사합니다.
+Disconnect from the internet and open `index.html` to inspect older conversations, images, files, and important spreadsheets. Copy **the entire output folder** to another disk as well. Copying `index.html` alone leaves the other archive files behind.
 
-## 자주 발생하는 문제
+## Troubleshooting
 
-| 증상                       | 확인할 것                                                                     |
-| -------------------------- | ----------------------------------------------------------------------------- |
-| 서비스/API를 찾지 못함     | `login` 재실행, 웹 채팅 화면까지 열기, 조직 정책 또는 API 변경 확인           |
-| 401                        | 세션 만료 가능성. 브라우저를 켠 상태에서 다시 로그인                          |
-| 403/404                    | 원본 권한·삭제 여부 확인. 파일 메타데이터와 공유 링크 모두 실패할 수 있음     |
-| HTML을 파일로 받을 수 없음 | 로그인·미리보기 화면일 수 있음. 실제 다운로드 버튼으로 내보낸 뒤 가져오기     |
-| OneDrive가 발견되지 않음   | 백업 브라우저의 파일/OneDrive 화면을 열고 다시 수집                           |
-| 시트 값 대신 수식 표시     | 저장된 계산 결과 캐시가 없음. 원본 Excel에서 계산 후 저장하거나 원본으로 확인 |
-| 녹화가 이미지로만 보임     | `recording-thumbnail`인지 확인. 녹화 영상 원본을 따로 확보해야 함             |
-| 종료 코드 2                | 실행 완료 후 검토할 항목이 있음. 검증 보고서 확인                             |
-| 저장 공간 부족             | 출력 드라이브 여유 공간 확보. 큰 라이브러리 범위 확인                         |
+| Symptom                                         | What to check                                                                                                       |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Service or API discovery fails                  | Rerun `login`, reach the web chat screen, and check for organization restrictions or API changes                    |
+| 401                                             | The session may have expired; sign in again with the browser visible                                                |
+| 403/404                                         | Check permissions and whether the original still exists; both metadata requests and shared-link resolution can fail |
+| HTML returned instead of a file                 | It may be a login or preview page; use the service's download button, then import the exported file                 |
+| OneDrive is not discovered                      | Open Files/OneDrive in the backup browser and retry collection                                                      |
+| A spreadsheet shows formulas instead of results | Cached calculation results are missing; calculate and save the original in Excel, or inspect the original directly  |
+| A recording appears only as an image            | Check for `recording-thumbnail`; obtain the original video separately                                               |
+| Exit code 2                                     | The run completed with items requiring review; open the verification report                                         |
+| Insufficient disk space                         | Free space on the output drive and review the scope of large libraries                                              |
 
-수집기는 Teams 웹 내부 API에 의존합니다. 조직 차원의 공식 내보내기 경로는 [Microsoft Teams Export API 문서](https://learn.microsoft.com/en-us/microsoftteams/export-teams-content)를 참고하세요.
+The collector relies on internal Teams web APIs. For an official organization-wide export route, see the [Microsoft Teams Export API documentation](https://learn.microsoft.com/en-us/microsoftteams/export-teams-content).

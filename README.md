@@ -76,7 +76,7 @@ By default, the exporter collects messages, attachments, discovered Teams docume
 
 **Review `verification.html` and `unavailable-files.csv`.** Matching file hashes confirm the integrity of saved files; collection coverage must be reviewed separately. Exit code `2` means the archive has items that need review, while `1` indicates an execution error. The synthetic demo intentionally includes an unavailable file in its verification report.
 
-The **[backup guide (Korean)](docs/backup-guide.md)** covers resuming interrupted runs, checks before account expiration, external services, lab spreadsheets, and manual exports.
+The **[backup guide](docs/backup-guide.md)** covers resuming interrupted runs, checks before account expiration, external services, lab spreadsheets, and manual exports.
 
 ## Commands
 
@@ -117,7 +117,7 @@ npm run check:privacy
 
 `test:viewer` checks KST formatting, search, mentions, quotes, auto-scroll, and spreadsheets using `file://` in an offline browser configured with a US time zone. `screenshots` captures only the synthetic demo and accepts no real browser profile or archive path.
 
-[Development and privacy separation (Korean)](docs/development.md) · [Archive format (Korean)](docs/archive-format.md) · [Third-party notices](THIRD_PARTY_NOTICES.md)
+[Development and privacy separation](docs/development.md) · [Archive format](docs/archive-format.md) · [Third-party notices](THIRD_PARTY_NOTICES.md)
 
 ## License
 

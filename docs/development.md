@@ -1,30 +1,30 @@
-# 개발 및 개인정보 분리
+# Development and privacy separation
 
-실제 계정 없이 데모 생성과 회귀 테스트를 할 수 있습니다. 공개 데모를 만들기 위해 실제 대화를 익명화하거나 일부 잘라 쓰지 않습니다.
+You can generate the demo and run regression tests without a real account. The public demo is created from scratch; it does not use anonymized conversations or excerpts from real chats.
 
-## 공개 파일의 출처
+## Provenance of public files
 
-| 파일                                                    | 출처                                                  |
-| ------------------------------------------------------- | ----------------------------------------------------- |
-| `viewer/`, `lib/`, `bin/`, `scripts/`                   | 재사용 가능한 프로그램 코드                           |
-| `demo/raw`, `demo/conversations`, `demo/app/data.js` 등 | `scripts/make-demo.cjs`가 처음부터 생성한 가상 데이터 |
-| 데모 프로필·실험 이미지                                 | 생성기 안에 작성한 SVG 도형                           |
-| 데모 워크북                                             | `scripts/make-demo-sheet.py`가 만든 가상 일정·측정값  |
-| `docs/screenshots/*.png`                                | 오프라인 Chromium에서 가상 데모만 촬영                |
-| KaTeX                                                   | 잠금 파일로 고정한 npm 배포본과 MIT 라이선스          |
-| Noto Color Emoji                                        | 공식 저장소의 고정 리비전·해시와 OFL 라이선스         |
+| Files                                                                  | Source                                                                       |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `viewer/`, `lib/`, `bin/`, `scripts/`                                  | Reusable application code                                                    |
+| `demo/raw`, `demo/conversations`, `demo/app/data.js`, and related data | Synthetic fixtures created from scratch by `scripts/make-demo.cjs`           |
+| Demo avatars and experiment image                                      | SVG shapes written directly in the generator                                 |
+| Demo workbook                                                          | Fictional schedules and measurements created by `scripts/make-demo-sheet.py` |
+| `docs/screenshots/*.png`                                               | Screenshots of the synthetic demo captured in offline Chromium               |
+| KaTeX                                                                  | The npm distribution pinned by the lockfile, with its MIT license            |
+| Noto Color Emoji                                                       | An official upstream artifact with a pinned revision, hash, and OFL license  |
 
-데모 인물은 Alex Demo, Blair Demo, Casey Demo입니다. 계정 GUID는 `00000000-0000-4000-8000-000000000001`부터 `...003`까지의 가상 값이며, 파일 주소는 `demo.example.invalid`를 사용합니다. 실제 사용자 계정·테넌트·조직 주소가 아닙니다.
+The demo characters are Alex Demo, Blair Demo, and Casey Demo. Their fictional account GUIDs run from `00000000-0000-4000-8000-000000000001` through `...003`, and file URLs use `demo.example.invalid`. These do not identify real user accounts, tenants, or organizations.
 
-## 경로와 인증
+## Paths and authentication
 
-CLI는 실제 출력과 브라우저 프로필 경로를 정규화하고, 심볼릭 링크를 따라 해석한 뒤 모든 Git 작업 폴더 안의 경로를 거부합니다. 프로필과 출력 경로의 중첩도 거부합니다. `demo`만 지정된 가상 생성기를 통해 예외로 처리합니다.
+The CLI normalizes archive and browser-profile paths, resolves symlinks, and rejects paths inside any Git working tree. It also rejects overlapping profile and output directories. The dedicated synthetic generator is the only exception for creating the `demo` directory inside this repository.
 
-Teams·SharePoint·미디어 요청은 알려진 Microsoft 출처에만 인증을 붙입니다. SharePoint의 다른 호스트에 인증 헤더를 재사용하지 않습니다. 다운로드 리디렉션이 출처를 바꾸면 인증 헤더를 전부 제거하고, 뒤의 리디렉션에서 다시 붙이지 않습니다. 외부 파일 다운로드는 인증을 붙이지 않습니다.
+Authentication for Teams, SharePoint, and media requests is attached only to recognized Microsoft service origins. Headers captured for one SharePoint hostname are not reused for another. If a download redirect changes origin, all authentication headers are removed and remain removed for subsequent redirects. External file downloads receive no authentication headers.
 
-원시 응답 저장 시 토큰·쿠키·서명 다운로드 URL 필드를 제거합니다. 로그인 프로필 자체, HAR, 브라우저 trace, 개인 백업은 버전 관리에 넣지 않습니다. 채팅 본문이나 일반 링크에 있는 민감 정보까지 자동으로 제거하지는 않으므로 **실제 출력 폴더를 공개 데모로 재사용하면 안 됩니다.**
+Recognized token, cookie, and preauthenticated download URL fields are removed before raw responses are saved. Keep login profiles, HAR files, browser traces, and personal archives out of version control. Sensitive content inside chat bodies and ordinary links is not automatically removed, so **never reuse a real output directory as the public demo.**
 
-## 검증과 촬영
+## Checks and screenshots
 
 ```bash
 npm ci
@@ -36,19 +36,19 @@ npm run screenshots
 npm run check:privacy
 ```
 
-Python 의존성은 README 설치 절차대로 먼저 설치합니다. `screenshots`는 경로 옵션을 받지 않으며 `demo/archive-settings.json`의 가상 데이터 표시를 확인합니다. 계정이 로그인된 사용자 브라우저에 연결하지 않습니다.
+Install the Python dependencies first by following the README. `screenshots` accepts no path options and checks the synthetic-data marker in `demo/archive-settings.json`. It does not connect to a browser signed in to a user's account.
 
-공개 파일 검사는 허용된 디렉터리, 가상 데이터 표시, GUID, 토큰 형태, 사용자 홈 경로, 데모 인물, 라이선스 폰트 해시를 확인합니다. 추가로 비공개 금지어 목록 JSON 파일을 저장소 밖에 두고 `TEAMS_PRIVATE_DENYLIST` 환경 변수로 전달할 수 있습니다. 금지어 값은 출력하지 않고 발견된 파일과 개수만 보고합니다. 이 검사는 육안 리뷰를 대체하는 완전한 개인정보 탐지기가 아닙니다.
+The public-file checker examines allowed directories, synthetic-data markers, GUIDs, credential-like strings, user home paths, demo profiles, and the bundled font's hash. For additional checks, keep a private JSON denylist outside the repository and pass its path through the `TEAMS_PRIVATE_DENYLIST` environment variable. Matches are reported by filename and count without printing the private values. These checks supplement manual review; they are not a comprehensive personal-data detector.
 
-커밋 전 `git diff --cached --stat`와 실제 파일 목록을 확인합니다. 스크린샷의 주소창·계정 UI, 워크북 문서 속성, 신규 바이너리 출처도 확인해야 합니다. CI는 실제 계정이나 Microsoft 인증 정보 없이 가상 데이터로만 실행합니다.
+Before committing, review `git diff --cached --stat` and the actual file list. Also inspect screenshots for address bars or account UI, workbook document properties, and the provenance of new binary files. CI runs entirely on synthetic data without a real account or Microsoft credentials.
 
-## 테스트 범위
+## Test coverage
 
-- 출력 경로·심볼릭 링크와 Git 작업 폴더 차단
-- 리디렉션 인증 제거, 인증 필드 제거, 파일 다운로드·해시·HTML 오인 방지
-- 가상 API의 페이지 순회, 반복 페이지 감지, 중단 후 재개
-- 파일 무결성과 수집 범위의 구분, 저장 파일 변조 탐지
-- 인터넷 차단과 `file://` 환경에서 UI 이동·검색·시트·수식
-- 미국 시간대에서도 KST 표시
+- Archive path validation, symlink handling, and rejection of Git working-tree paths
+- Removal of authentication across redirects and from serialized fields, download hashing, and rejection of HTML masquerading as a file
+- Mock API pagination, detection of repeated pages, and resuming interrupted collection
+- Separate reporting of file integrity and collection coverage, including detection of modified files
+- Navigation, search, spreadsheets, and math in an offline browser over `file://`
+- KST timestamps while the browser is configured with a US time zone
 
-실제 Teams 계정에 대한 테넌트별 호환성은 가상 테스트만으로 보증하지 않습니다. 내부 API 수집기를 수정하면 허용된 개인 환경에서 별도로 확인하고, 그 결과 데이터는 공개 저장소로 옮기지 않습니다.
+Synthetic tests do not establish compatibility with every Teams tenant. When changing the internal API collector, validate it separately in an authorized private environment and keep the resulting account data outside the public repository.
