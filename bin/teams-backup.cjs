@@ -30,6 +30,8 @@ async function main() {
       libraries: { type: "string", default: "teams" },
       onedrive: { type: "boolean" },
       refresh: { type: "boolean" },
+      incremental: { type: "boolean" },
+      cdp: { type: "string" },
       "self-id": { type: "string" },
       key: { type: "string" },
       file: { type: "string" },
@@ -37,11 +39,13 @@ async function main() {
     },
   });
   const command = positionals[0];
+  if (values.refresh && values.incremental)
+    throw new Error("Choose --refresh or --incremental, not both");
   if (values.help || !command) {
     console.log(`Teams Offline Backup
 
 node bin/teams-backup.cjs login [--profile PATH] [--channel chrome|msedge]
-node bin/teams-backup.cjs backup --output PRIVATE_PATH [--refresh] [--headless]
+node bin/teams-backup.cjs backup --output PRIVATE_PATH [--refresh|--incremental] [--headless] [--cdp URL]
     [--external none|files|all] [--libraries teams|none] [--onedrive]
 node bin/teams-backup.cjs build --output PRIVATE_PATH
 node bin/teams-backup.cjs verify --output PRIVATE_PATH
@@ -50,7 +54,8 @@ node bin/teams-backup.cjs demo
 
 Defaults: ~/TeamsBackups/archive; browser profile outside the source checkout.
 Real output/profile paths inside any Git working tree are rejected.
-backup retries/resumes a previous run; --refresh traverses message history again.
+backup retries/resumes a previous run; --incremental compares all message history and retains downloaded files.
+--refresh also retries existing file downloads. --cdp reuses a running signed-in browser.
 Exit 2 means the archive exists but verification needs review. See docs/backup-guide.md.`);
     return;
   }
@@ -117,6 +122,21 @@ Exit 2 means the archive exists but verification needs review. See docs/backup-g
     let session;
     try {
       const existing = read(path.join(output, "archive-settings.json"), {});
+      if (existing.snapshotTime) {
+        const history = path.join(
+          output,
+          "history",
+          existing.snapshotTime.replace(/[^0-9TZ-]/g, "-"),
+        );
+        fs.mkdirSync(history, { recursive: true });
+        for (const name of fs
+          .readdirSync(output)
+          .filter((n) => n.endsWith(".json") || n === "SHA256SUMS.txt")) {
+          const destination = path.join(history, name);
+          if (!fs.existsSync(destination))
+            fs.copyFileSync(path.join(output, name), destination);
+        }
+      }
       save(path.join(output, "archive-settings.json"), {
         ...existing,
         snapshotTime: new Date().toISOString(),

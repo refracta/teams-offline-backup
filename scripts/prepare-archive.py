@@ -66,7 +66,7 @@ for s in cache["stores"]:
 for item in inventory["items"]:
     raw = {}
     cache_only = []
-    for f in sorted((ROOT / "raw/messages" / item["key"]).glob("[0-9]*.json")):
+    for f in sorted((ROOT / "raw/messages" / item["key"]).glob("[0-9]*.json"), key=lambda p: int(p.stem)):
         for m in read(f).get("messages", []):
             raw[str(m["id"])] = m
     messages = []

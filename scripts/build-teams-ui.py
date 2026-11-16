@@ -792,5 +792,6 @@ for src, dest in [
     ("index.html", ROOT / "index.html"),
     ("app.js", APP / "app.js"),
     ("app.css", APP / "app.css"),
+    ("webmcp.js", APP / "webmcp.js"),
 ]:
     shutil.copy2(Path(__file__).parent.parent / "viewer" / src, dest)

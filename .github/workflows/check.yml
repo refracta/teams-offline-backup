@@ -22,4 +22,5 @@ jobs:
       - run: npm run demo
       - run: npm test
       - run: npm run test:viewer
+      - run: npm run test:webmcp
       - run: npm run check:privacy

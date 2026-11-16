@@ -28,7 +28,7 @@ def parse(s):
 
 
 names = {}
-people = {}
+people = {p["id"]: p for p in read(ROOT / "profiles.json")} if (ROOT / "profiles.json").exists() else {}
 links = {}
 static = {}
 cards = {}

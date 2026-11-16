@@ -175,7 +175,7 @@ function shortDate(value) {
         "."
     : "";
 }
-window.TeamsArchive = { kst, parts };
+window.TeamsArchive = Object.assign(window.TeamsArchive || {}, { kst, parts });
 function bytes(n) {
   if (!Number.isFinite(n)) return "";
   if (n < 1024) return n + " B";
@@ -834,8 +834,12 @@ async function showSheet(key, c = null, tab = null) {
   const version = routeVersion;
   const book = await load("sheet", key);
   if (version !== routeVersion) return;
-  let sheetIndex = 0,
-    startRow = 1,
+  const params = new URLSearchParams(location.hash.slice(1));
+  let sheetIndex = Math.max(
+      0,
+      Math.min(book.sheets.length - 1, Number(params.get("worksheet")) || 0),
+    ),
+    startRow = Math.max(1, Number(params.get("row")) || 1),
     startCol = 1;
   const pageRows = 150,
     pageCols = 80;
@@ -938,6 +942,36 @@ async function showSearch(query) {
   cleanHeader("검색 결과", "전체 대화에서 “" + query + "” 검색", "chat");
   $("#content").innerHTML = '<div class="empty">검색 색인을 여는 중…</div>';
   const version = routeVersion;
+  if (window.TeamsArchive.ready && (await window.TeamsArchive.ready)) {
+    const draw = async (offset = 0) => {
+      const result = await window.TeamsArchive.call("search_archive", {
+        query,
+        limit: 100,
+        offset,
+      });
+      if (version !== routeVersion) return;
+      const rows = result.items
+        .map((r) => {
+          const target = r.kind === "file" ? r.downloadUrl || r.url : r.url;
+          const label =
+            r.kind === "message"
+              ? "메시지"
+              : r.kind === "sheet"
+                ? "시트 · " + r.row + "행"
+                : "파일";
+          return `<a class="search-result" href="${esc(target)}"><div class="search-result-top"><b>${esc(label + " · " + r.title)}</b><span>${esc(r.timeKST || "")}</span></div><p>${esc(r.snippet)}</p></a>`;
+        })
+        .join("");
+      $("#content").innerHTML =
+        `<div class="panel"><p class="panel-note">메시지·파일·시트 ${result.total.toLocaleString()}개</p>${rows || '<div class="empty">검색 결과가 없습니다.</div>'}<div class="sheet-pagination"><button id="result-prev" ${offset ? "" : "disabled"}>이전</button><span>${offset + 1}–${Math.min(offset + 100, result.total)} / ${result.total}</span><button id="result-next" ${offset + 100 < result.total ? "" : "disabled"}>다음</button></div></div>`;
+      $("#result-prev").onclick = () =>
+        draw(Math.max(0, offset - 100)).catch((e) => showError(e.message));
+      $("#result-next").onclick = () =>
+        draw(offset + 100).catch((e) => showError(e.message));
+    };
+    await draw();
+    return;
+  }
   if (!window.TEAMS_SEARCH) {
     searchLoading ||= script("app/search.js");
     await searchLoading;

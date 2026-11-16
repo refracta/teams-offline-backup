@@ -245,3 +245,133 @@ test("verification distinguishes file integrity from collection coverage and det
   assert.equal(second.integrityPassed, false);
   assert.match(second.failures[0].reason, /SHA-256/);
 });
+
+test("incremental capture preserves legacy keys and finds edits beyond the first overlap", async (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "teams-incremental-"));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const id = "19:synthetic-incremental@thread.v2",
+    legacy = "legacy-key";
+  save(path.join(root, "inventory.json"), {
+    items: [{ id, key: legacy, title: "Earlier title", kind: "chat" }],
+  });
+  const dir = path.join(root, "raw/messages", legacy);
+  save(path.join(dir, "00009.json"), {
+    messages: [
+      { id: "1", content: "old" },
+      { id: "2", content: "unchanged" },
+    ],
+  });
+  save(path.join(dir, "state.json"), {
+    id,
+    key: legacy,
+    status: "complete",
+    pages: 1,
+    messageCount: 2,
+  });
+  let pages = 0;
+  const session = {
+    endpoint: () => "https://teams.example.invalid",
+    get: async (url) => {
+      if (url.includes("/teams/users/me"))
+        return {
+          status: 200,
+          data: { chats: [{ id, title: "Current title" }] },
+        };
+      if (url.includes("/conversations?pageSize"))
+        return { status: 200, data: { conversations: [] } };
+      pages++;
+      if (url.endsWith("/older"))
+        return {
+          status: 200,
+          data: { messages: [{ id: "1", content: "edited older message" }] },
+        };
+      return {
+        status: 200,
+        data: {
+          messages: [
+            { id: "3", content: "new" },
+            { id: "2", content: "unchanged" },
+          ],
+          _metadata: { backwardLink: "https://teams.example.invalid/older" },
+        },
+      };
+    },
+  };
+  await messages(session, root, { incremental: true });
+  assert.equal(pages, 2);
+  assert.equal(read(path.join(root, "inventory.json")).items[0].key, legacy);
+  assert.equal(read(path.join(dir, "0000010.json")).messages[0].id, "3");
+  assert.equal(
+    read(path.join(dir, "0000011.json")).messages[0].content,
+    "edited older message",
+  );
+  const summary = read(path.join(root, "message-refresh-summary.json"));
+  assert.equal(summary.added, 1);
+  assert.equal(summary.updated, 1);
+  assert.equal(read(path.join(dir, "00009.json")).messages[0].content, "old");
+  await messages(session, root, { incremental: true });
+  assert.equal(read(path.join(root, "message-refresh-summary.json")).added, 0);
+  assert.equal(
+    read(path.join(root, "message-refresh-summary.json")).updated,
+    0,
+  );
+  assert.equal(fs.existsSync(path.join(dir, "0000012.json")), false);
+});
+
+test("incremental file collection preserves recovered downloads and inaccessible external links", async (t) => {
+  const root = fs.mkdtempSync(
+    path.join(os.tmpdir(), "teams-file-incremental-"),
+  );
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const { files } = require("../lib/files.cjs");
+  const asset = {
+    key: "saved",
+    kind: "attachment",
+    name: "saved.txt",
+    url: "https://demo.example.invalid/saved.txt",
+  };
+  const blocked = {
+    key: "blocked",
+    kind: "external-link",
+    url: "https://demo.example.invalid/inaccessible",
+  };
+  save(path.join(root, "all-assets.json"), [asset]);
+  save(path.join(root, "external-assets.json"), [blocked]);
+  fs.mkdirSync(path.join(root, "files"));
+  fs.writeFileSync(path.join(root, "files/saved.txt"), "saved");
+  save(path.join(root, "raw/file-states/saved.json"), {
+    key: "saved",
+    status: "failed",
+  });
+  save(path.join(root, "raw/external-states/saved.json"), {
+    key: "saved",
+    status: "complete",
+    localPath: "files/saved.txt",
+    bytes: 5,
+    sha256: await hashFile(path.join(root, "files/saved.txt")),
+  });
+  save(path.join(root, "raw/external-states/blocked.json"), {
+    key: "blocked",
+    status: "browser-required",
+    error: "Sign-in unavailable",
+  });
+  await files(
+    {
+      get: () => {
+        throw new Error("No network request expected");
+      },
+    },
+    root,
+    { incremental: true, libraries: "none", external: "files" },
+  );
+  const manifest = read(path.join(root, "file-manifest.json"));
+  assert.equal(manifest.find((x) => x.key === "saved").status, "complete");
+  assert.equal(
+    manifest.find((x) => x.key === "blocked").status,
+    "browser-required",
+  );
+  assert.equal(
+    fs.readFileSync(path.join(root, "files/saved.txt"), "utf8"),
+    "saved",
+  );
+});

@@ -20,3 +20,8 @@ playwright-report/
 test-results/
 .DS_Store
 Thumbs.db
+
+*.sqlite
+*.sqlite-*
+*auth.local.json
+connection.json

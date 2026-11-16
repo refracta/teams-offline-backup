@@ -114,3 +114,11 @@ Disconnect from the internet and open `index.html` to inspect older conversation
 | Insufficient disk space                         | Free space on the output drive and review the scope of large libraries                                              |
 
 The collector relies on internal Teams web APIs. For an official organization-wide export route, see the [Microsoft Teams Export API documentation](https://learn.microsoft.com/en-us/microsoftteams/export-teams-content).
+
+## Incremental updates and moving an archive
+
+Use `backup --output PRIVATE_PATH --incremental` after the initial backup. It traverses every message page to catch edits to older messages, stores changed records, preserves conversation keys and prior raw pages, and reuses existing downloads. Libraries are enumerated again; files modified since the previous download and linked Google spreadsheets are refreshed. Previously inaccessible external links remain recorded; use `--refresh` for an explicit retry of all downloads. Generic external URLs do not necessarily expose version metadata, so incremental mode cannot guarantee detection of every changed external document.
+
+Use `--cdp http://127.0.0.1:9222` to attach to an already running dedicated browser, keeping its profile outside the archive. The collector opens its own tab and disconnects without closing the existing browser. Serialize access with any other tools using that profile.
+
+The archive contains portable relative paths. Copy the entire folder to its new drive, verify the destination, then remove the source only after the copy is confirmed. Rebuild from the new `--output` path when necessary. `agent/search.sqlite`, `agent/search.py`, `AGENT_GUIDE.md`, and `AGENTS.md` provide a fast starting point for local agents. The hosted alternative is documented in [hosting.md](hosting.md).

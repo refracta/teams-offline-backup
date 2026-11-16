@@ -78,12 +78,19 @@ By default, the exporter collects messages, attachments, discovered Teams docume
 
 The **[backup guide](docs/backup-guide.md)** covers resuming interrupted runs, checks before account expiration, external services, lab spreadsheets, and manual exports.
 
+## Private web hosting and AI search
+
+The archive can also run as an authenticated HTTPS website for other computers. It includes a SQLite search index for messages, file metadata, and worksheet values/formulas, plus read-only WebMCP tools and an authenticated JSON API. Browser WebMCP support is optional; normal website search and the API work independently.
+
+See [private hosting](docs/hosting.md) and the [AI agent search guide](docs/agent-guide.md). Credentials and real archives stay outside this repository.
+
 ## Commands
 
 | Command                                           | Purpose                                                                               |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | `login`                                           | Save an interactive sign-in in the dedicated browser profile                          |
 | `backup --output PATH`                            | Collect messages and files, then build the viewer; rerun with the same path to resume |
+| `backup --output PATH --incremental`              | Compare all message history, retain unchanged downloads, and collect additions        |
 | `backup --output PATH --refresh`                  | Traverse all message pages again and refresh files                                    |
 | `build --output PATH`                             | Rebuild the viewer and spreadsheet previews from existing data without network access |
 | `verify --output PATH`                            | Check file sizes and hashes, message artifacts, and collection coverage               |
