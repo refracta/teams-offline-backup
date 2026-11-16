@@ -114,7 +114,7 @@ class Handler(BaseHTTPRequestHandler):
             parts = Path(relative).parts
             if ".." in parts or any(p.startswith(".") for p in parts) or "\\" in relative or "\x00" in relative:
                 raise ValueError()
-            if parts[0] not in ("app", "files", "index.html", "verification.html", "verification.json", "unavailable-files.csv", "AGENT_GUIDE.md", "AGENTS.md"):
+            if parts[0] not in ("app", "files", "index.html", "verification.html", "verification.json", "SHA256SUMS.txt", "file-manifest.json", "external-manifest.json", "unavailable-files.csv", "AGENT_GUIDE.md", "AGENTS.md"):
                 raise ValueError()
             file = (self.server.root / relative).resolve()
             if not file.is_relative_to(self.server.root) or not file.is_file():

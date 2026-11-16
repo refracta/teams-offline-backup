@@ -1382,7 +1382,7 @@ async function route() {
     }
     const view = p.get("view");
     if (view === "files") {
-      showFiles();
+      showFiles(p.has("file") ? new Set([p.get("file")]) : null);
       return;
     }
     if (view === "sheets") {

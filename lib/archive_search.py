@@ -117,7 +117,7 @@ def build_index(root):
         payload = dict(entry)
         if entry.get("localPath"):
             payload["downloadUrl"] = "/" + quote(entry["localPath"], safe="/")
-        payload["url"] = "/#" + urlencode({"view": "files", "search": entry.get("name", "")})
+        payload["url"] = "/#" + urlencode({"view": "files", "file": key})
         add("file", key, entry.get("name", ""), " ".join(str(entry.get(k, "")) for k in
             ("name", "localPath", "sourceUrl", "kind", "status")), payload)
     for path in sorted((root / "app/sheets").glob("*.js")):
@@ -215,6 +215,8 @@ class Archive:
             position = max(0, text.casefold().find(terms[0].casefold()) - 90)
             item.pop("text", None)
             item.update(kind=row["kind"], key=row["object_key"], title=row["title"], snippet=text[position:position + 650])
+            if row["kind"] == "file":
+                item["url"] = "/#" + urlencode({"view": "files", "file": item["key"]})
             if "cells" in item:
                 item["cells"] = item["cells"][:30]
             items.append(item)
@@ -234,6 +236,7 @@ class Archive:
         if not row:
             raise ValueError("File not found")
         result = json.loads(row[0])
+        result["url"] = "/#" + urlencode({"view": "files", "file": key})
         local = (self.root / result.get("localPath", "")).resolve()
         result["available"] = bool(result.get("localPath") and local.is_relative_to(self.root) and local.is_file() and (result.get("bytes") is None or local.stat().st_size == result["bytes"]))
         if not result["available"]:

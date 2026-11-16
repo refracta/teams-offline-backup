@@ -94,6 +94,15 @@ server.serve_forever()`;
     );
     assert.equal(status.counts.message, 297);
     assert.equal(errors.length, 0, errors.join("\n"));
+    const unavailable = await page.evaluate(() =>
+      Object.values(TEAMS_BACKUP.files).find((f) => !f.localPath),
+    );
+    assert.ok(unavailable);
+    await page.goto(
+      base + "/#view=files&file=" + encodeURIComponent(unavailable.key),
+    );
+    await page.locator("#file-count").waitFor();
+    assert.equal(await page.locator("#file-count").innerText(), "1개");
     await context.close();
     const fallback = await browser.newContext({
       httpCredentials: {

@@ -76,11 +76,16 @@ test("redirects permanently drop every authentication header on origin change", 
   };
   const response = await fetchRedirects(
     "https://origin.example.invalid/file",
-    { authorization: "Bearer FAKE-TEST", authentication: "FAKE-TEST" },
+    {
+      authorization: "Bearer FAKE-TEST",
+      authentication: "FAKE-TEST",
+      cookie: "FedAuth=synthetic",
+    },
     mock,
   );
   assert.equal(await response.text(), "done");
   assert.equal(calls[0].headers.authorization, "Bearer FAKE-TEST");
+  assert.equal(calls[0].headers.cookie, "FedAuth=synthetic");
   assert.deepEqual(calls[1].headers, {});
   assert.deepEqual(calls[2].headers, {});
   await assert.rejects(
@@ -373,5 +378,186 @@ test("incremental file collection preserves recovered downloads and inaccessible
   assert.equal(
     fs.readFileSync(path.join(root, "files/saved.txt"), "utf8"),
     "saved",
+  );
+});
+
+test("incremental library discovery revisits prior drives within the requested scope", async (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "teams-drive-scope-"));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const { libraryInventory } = require("../lib/files.cjs");
+  const team = "https://synthetic.sharepoint.com/sites/Archive";
+  const personal = "https://synthetic-my.sharepoint.com/personal/reader";
+  save(path.join(root, "library-assets.json"), [
+    { key: "team-file", baseUrl: team, driveId: "team-drive" },
+    { key: "personal-file", baseUrl: personal, driveId: "my-drive" },
+  ]);
+  const requested = [];
+  const session = {
+    captured: new Map(),
+    get: async (url) => {
+      requested.push(url);
+      return { status: 200, data: { value: [] } };
+    },
+  };
+  await libraryInventory(session, root, {
+    incremental: true,
+    libraries: "teams",
+  });
+  assert.equal(requested.length, 1);
+  assert.ok(requested[0].startsWith(team));
+  requested.length = 0;
+  await libraryInventory(session, root, {
+    incremental: true,
+    libraries: "none",
+    onedrive: true,
+  });
+  assert.equal(requested.length, 1);
+  assert.ok(requested[0].startsWith(personal));
+  assert.equal(
+    read(path.join(root, "library-inventory.json"))[0].status,
+    "complete",
+  );
+  assert.equal(read(path.join(root, "library-assets.json")).length, 2);
+});
+
+test("modified files retry after a failed refresh and use origin-scoped browser cookies", async (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "teams-refresh-cookie-"));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const { files } = require("../lib/files.cjs");
+  const url = "https://synthetic.sharepoint.com/sites/Archive/_api/content";
+  const asset = {
+    key: "modified",
+    kind: "library",
+    url,
+    downloadApi: url,
+    name: "report.txt",
+    relativePath: "files/report.txt",
+    expectedSize: 3,
+    remoteModifiedAt: "2021-01-01T00:00:00Z",
+    remoteETag: "current",
+  };
+  save(path.join(root, "all-assets.json"), [asset]);
+  fs.mkdirSync(path.join(root, "files"));
+  fs.writeFileSync(path.join(root, "files/report.txt"), "old");
+  const sha256 = await hashFile(path.join(root, "files/report.txt"));
+  save(path.join(root, "raw/file-states/modified.json"), {
+    key: asset.key,
+    status: "complete",
+    localPath: asset.relativePath,
+    bytes: 3,
+    sha256,
+    completedAt: "2020-01-01T00:00:00Z",
+  });
+  let attempts = 0;
+  const mock = t.mock.method(global, "fetch", async (target, options) => {
+    assert.equal(target, url);
+    assert.equal(options.headers.cookie, "FedAuth=synthetic-cookie");
+    attempts++;
+    return attempts === 1
+      ? new Response(null, { status: 401 })
+      : new Response("new", {
+          headers: { "content-type": "text/plain", "content-length": "3" },
+        });
+  });
+  const session = {
+    headersFor: async () => ({}),
+    context: {
+      cookies: async (target) => {
+        assert.equal(target, url);
+        return [{ name: "FedAuth", value: "synthetic-cookie" }];
+      },
+    },
+  };
+  const options = { incremental: true, libraries: "none" };
+  await files(session, root, options);
+  let state = read(path.join(root, "raw/file-states/modified.json"));
+  assert.equal(state.status, "complete");
+  assert.equal(state.lastAttempt.httpStatus, 401);
+  assert.equal(
+    fs.readFileSync(path.join(root, asset.relativePath), "utf8"),
+    "old",
+  );
+  await files(session, root, options);
+  state = read(path.join(root, "raw/file-states/modified.json"));
+  assert.equal(state.remoteETag, "current");
+  assert.equal(state.lastAttempt, undefined);
+  assert.equal(
+    fs.readFileSync(path.join(root, asset.relativePath), "utf8"),
+    "new",
+  );
+  assert.equal(
+    await hashFile(path.join(root, state.previousVersion.localPath)),
+    sha256,
+  );
+  assert.ok(
+    !fs
+      .readFileSync(path.join(root, "raw/file-states/modified.json"), "utf8")
+      .includes("synthetic-cookie"),
+  );
+  await files(session, root, options);
+  assert.equal(mock.mock.callCount(), 2);
+});
+
+test("legacy non-drive library scopes discover newly added files", async (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "teams-legacy-library-"));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const { libraryInventory } = require("../lib/files.cjs");
+  const base = "https://synthetic.sharepoint.com/sites/Archive";
+  save(path.join(root, "library-inventory.json"), [
+    {
+      base,
+      prefix: "files/channels/Archive/Site Assets",
+      files: 0,
+      status: "complete",
+    },
+  ]);
+  const session = {
+    get: async (url) => {
+      if (url.includes("/RootFolder?")) return { status: 404, data: {} };
+      if (url.includes("/lists?"))
+        return {
+          status: 200,
+          data: {
+            d: {
+              results: [
+                {
+                  Title: "Localized assets",
+                  EntityTypeName: "SiteAssets",
+                  RootFolder: {
+                    ServerRelativeUrl: "/sites/Archive/SiteAssets",
+                  },
+                },
+              ],
+            },
+          },
+        };
+      if (url.includes("/Files?"))
+        return {
+          status: 200,
+          data: {
+            d: {
+              results: [
+                {
+                  Name: "new.txt",
+                  Length: "3",
+                  UniqueId: "00000000-0000-4000-8000-000000000001",
+                  ServerRelativeUrl: "/sites/Archive/SiteAssets/new.txt",
+                  TimeLastModified: "2021-01-01T00:00:00Z",
+                },
+              ],
+            },
+          },
+        };
+      return { status: 200, data: { d: { results: [] } } };
+    },
+  };
+  const assets = await libraryInventory(session, root, { incremental: true });
+  assert.equal(assets.length, 1);
+  assert.equal(assets[0].name, "new.txt");
+  assert.equal(assets[0].expectedSize, 3);
+  assert.equal(assets[0].remoteModifiedAt, "2021-01-01T00:00:00Z");
+  assert.equal(
+    read(path.join(root, "library-inventory.json"))[0].status,
+    "complete",
   );
 });

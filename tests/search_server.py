@@ -75,6 +75,12 @@ class SearchServer(unittest.TestCase):
         self.assertIn(found["id"], [x["id"] for x in context["items"]])
         self.assertLessEqual(len(context["items"]), 5)
         self.assertTrue(found["timeKST"])
+        file_hit = execute(self.root, "search_archive", {"query": "demo", "kind": "file", "limit": 1})["items"][0]
+        self.assertIn("view=files&file=", file_hit["url"])
+        info = execute(self.root, "get_file_info", {"key": file_hit["key"]})
+        self.assertEqual(info["url"], file_hit["url"])
+        with self.request("/file-manifest.json") as response:
+            self.assertEqual(response.status, 200)
         self.assertEqual(execute(self.root, "search_archive", {"query": "' OR 1=1 --"})["total"], 0)
         book = read_js(next((self.root / "app/sheets").glob("*.js")))
         rows = execute(self.root, "get_sheet_rows", {"key": book["key"], "sheet": 0, "start": 1, "limit": 2})
