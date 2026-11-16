@@ -165,7 +165,14 @@ class Archive:
         return json.loads(self.db.execute("SELECT value FROM metadata WHERE key=?", (key,)).fetchone()[0])
 
     def status(self, **_):
-        return {key: self.meta(key) for key in ("snapshotTime", "indexedAt", "counts", "coverage")}
+        result = {key: self.meta(key) for key in ("snapshotTime", "indexedAt", "counts", "coverage")}
+        # Verification commonly finishes after the expensive search index build.
+        # Report the current receipt without requiring another index rebuild.
+        try:
+            result["coverage"] = json.loads((self.root / "verification.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            pass
+        return result
 
     def conversations(self, query="", limit=50, offset=0, **_):
         items = [x for x in self.meta("conversations") if query.casefold() in x["title"].casefold()]

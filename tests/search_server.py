@@ -57,6 +57,18 @@ class SearchServer(unittest.TestCase):
         self.assertEqual(utc("2030-04-18T03:24:56.1234567Z"), "2030-04-18T03:24:56.123456Z")
         self.assertEqual(utc("2030-04-18T12:24:56"), "2030-04-18T03:24:56.000000Z")
 
+    def test_status_uses_verification_that_finished_after_indexing(self):
+        report = self.root / "verification.json"
+        previous = report.read_bytes()
+        try:
+            updated = json.loads(previous)
+            updated["refreshFailures"] = 7
+            report.write_text(json.dumps(updated), encoding="utf-8")
+            result = execute(self.root, "archive_status", {})
+            self.assertEqual(result["coverage"]["refreshFailures"], 7)
+        finally:
+            report.write_bytes(previous)
+
     def test_auth_protects_every_route(self):
         for path in ("/", "/app/data.js", "/files/demo/demo-lab.xlsx", "/api/tools", "/api/status", "/raw/server-inventory.json"):
             with self.request(path, authorized=False) as response:
