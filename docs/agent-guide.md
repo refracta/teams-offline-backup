@@ -41,3 +41,5 @@ Results include viewer URLs, conversation keys, message IDs, and KST timestamps.
 Use `get_file_info` to check status and provenance before claiming that a file is backed up. Available originals use authenticated same-origin download URLs. NAS folder links retain their addresses and any saved listings; they do not imply a recursive NAS backup. Inaccessible links remain recorded as such.
 
 The normalized source is in `conversations/`, rendered chat records in `app/chats/`, workbook snapshots in `app/sheets/`, and original attachments in `files/`. `raw/` and `history/` preserve collection evidence and previous versions. Do not edit them during search. Do not read the complete archive to answer a single question.
+
+Sheet search uses the current successful workbook exports listed in `sheet-summary.json`. Older preview files can remain on disk after a refresh, but are excluded from the index to avoid returning obsolete cell values. Retained original versions remain available under `history/`.

@@ -79,6 +79,22 @@ class SearchServer(unittest.TestCase):
         with self.request("/", authorized=False, headers={"Authorization": "Basic invalid"}) as response:
             self.assertEqual(response.status, 401)
 
+    def test_index_excludes_retired_sheet_previews_after_refresh(self):
+        root = Path(self.temp.name) / "retired-preview-archive"
+        shutil.copytree(REPO / "demo", root)
+        original = build_index(root)["counts"]["sheet"]
+        book = read_js(next((root / "app/sheets").glob("*.js")))
+        book["key"] = "retired-preview"
+        book["sheets"] = [{"name": "Retired worksheet", "cells": [[1, 1, "obsoletecellmarker", ""]]}]
+        stale = root / "app/sheets/retired-preview.js"
+        stale.write_text('window.__teamsBackupSheet("retired-preview",' + json.dumps(book) + ');', encoding="utf-8")
+        self.assertEqual(build_index(root)["counts"]["sheet"], original)
+        self.assertEqual(execute(root, "search_archive", {"query": "obsoletecellmarker", "kind": "sheet"})["total"], 0)
+        self.assertTrue(stale.is_file())
+        # Older archives without an export summary retain their previous behavior.
+        (root / "sheet-summary.json").unlink()
+        self.assertEqual(build_index(root)["counts"]["sheet"], original + 1)
+
     def test_search_context_sheets_and_injection(self):
         result = execute(self.root, "search_archive", {"query": "Demo", "kind": "message", "limit": 2})
         self.assertEqual(len(result["items"]), 2)

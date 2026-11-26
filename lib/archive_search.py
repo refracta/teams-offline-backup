@@ -120,7 +120,16 @@ def build_index(root):
         payload["url"] = "/#" + urlencode({"view": "files", "file": key})
         add("file", key, entry.get("name", ""), " ".join(str(entry.get(k, "")) for k in
             ("name", "localPath", "sourceUrl", "kind", "status")), payload)
+    sheet_manifest = root / "sheet-summary.json"
+    current_sheets = None
+    if sheet_manifest.is_file():
+        current_sheets = {entry["key"] for entry in json.loads(sheet_manifest.read_text(encoding="utf-8"))
+                          if entry.get("key") and entry.get("status") == "complete"}
     for path in sorted((root / "app/sheets").glob("*.js")):
+        # Content-addressed previews survive refreshes. Only current successful
+        # exports belong in search; retired previews can contain obsolete values.
+        if current_sheets is not None and path.stem not in current_sheets:
+            continue
         book = read_js(path)
         for index, sheet in enumerate(book["sheets"]):
             rows = {}
